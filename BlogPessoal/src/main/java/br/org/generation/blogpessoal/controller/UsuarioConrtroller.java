@@ -20,19 +20,32 @@ import br.org.generation.blogpessoal.service.UsuarioService;
 @CrossOrigin(origins ="*", allowedHeaders = "*")
 public class UsuarioConrtroller {
 	
+	
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	@PostMapping("/logar")
+		@PostMapping("/logar")
 	public ResponseEntity<UserLogin> Autetication(@RequestBody Optional<UserLogin> user){
 		return usuarioService.Logar(user).map(resp -> ResponseEntity.ok(resp))
 				.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 	}
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<Usuario> Post(@RequestBody Usuario usuario){
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(usuarioService.CadastrarUsuario(usuario));
+	public ResponseEntity<Optional<Usuario>> Post(@RequestBody Usuario usuario){
+		
+		Optional<Usuario> user = usuarioService.CadastrarUsuario(usuario);
+		
+		try {
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(user);
+			
+		}catch (Exception e){
+			
+			return ResponseEntity.badRequest().build();
+			
+		}
+		/*return ResponseEntity.status(HttpStatus.CREATED)
+				.body(usuarioService.CadastrarUsuario(usuario));*/
 	}
 
 
